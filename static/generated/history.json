@@ -1,0 +1,15 @@
+[
+  {
+    "filename": "20261125_104320_6_20251125.png",
+    "image_url": "/static/generated/20261125_104320_6_20251125.png",
+    "prompt": "a cinematic neon-lit cyberpunk street in the rain at night, reflections on wet pavement, cinematic still, dramatic lighting, anamorphic lens, film grain, depth of field, photorealistic, ultra-detailed, 8k resolution, natural lighting, realistic textures, sharp focus, shot on 35mm lens",
+    "original_prompt": "a cinematic neon-lit cyberpunk street in the rain at night, reflections on wet pavement",
+    "model": "flux-realism",
+    "engine": "pollinations",
+    "width": 1024,
+    "height": 1024,
+    "seed": 20251125,
+    "timestamp": "2026-11-25T10:43:20.668832+00:00",
+    "note": ""
+  }
+]

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="VB Image AI Studio - a free, open-source AI image generator with multi-engine failover." />
+  <meta name="theme-color" content="#0b0f19" />
+  <title>VB Image AI Studio — Free Open-Source AI Image Generator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <noscript><style>.reveal{opacity:1;transform:none}.cursor-glow,.aurora{display:none}</style></noscript>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- ======================= NAVBAR ======================= -->
+  <header class="navbar">
+    <a class="brand" href="/" aria-label="VB Image AI Studio home">
+      <span class="brand-mark">VB</span>
+      <span class="brand-text">
+        <strong>Image AI Studio</strong>
+        <small>Open-source creative engine</small>
+      </span>
+    </a>
+
+    <div class="nav-actions">
+      <span class="live-pill"><span class="live-dot"></span> System live</span>
+      <span class="badge"><span class="dot"></span> MIT Open Source</span>
+      <button type="button" class="btn btn-ghost" id="devBtn">About Dev</button>
+      <a class="btn btn-primary" href="https://github.com/Rg100152/vb-image" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ======================= HERO ======================= -->
+    <section class="hero reveal">
+      <p class="eyebrow">100% FREE · NO GPU REQUIRED · KEY OPTIONAL</p>
+      <h1>Turn words into <span class="gradient-text">stunning visuals.</span></h1>
+      <p class="hero-sub">A professional, open-source AI image studio powered by free public inference engines. Start generating instantly — no API key needed.</p>
+      <div class="hero-chips">
+        <span>⚡ Keyless by default</span>
+        <span>🔁 Automatic failover</span>
+        <span>🖼️ Local session gallery</span>
+      </div>
+      <p class="hero-rotator"><span class="rotator-label">Now creating:</span> <span id="heroRotator">cinematic portraits</span><span class="cursor-blink">_</span></p>
+      <div class="hero-stats">
+        <div class="stat"><strong data-count="2">0</strong><span>free engines</span></div>
+        <div class="stat"><strong data-count="7">0</strong><span>style presets</span></div>
+        <div class="stat"><strong>∞</strong><span>ideas unlocked</span></div>
+        <div class="stat"><strong data-count="100" data-suffix="%">0</strong><span>open source</span></div>
+      </div>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>FLUX.1-SCHNELL</span><i>✦</i><span>SDXL 1.0</span><i>✦</i><span>POLLINATIONS FLUX</span><i>✦</i><span>AUTO FAILOVER</span><i>✦</i><span>MIT LICENSED</span><i>✦</i>
+        <span>FLUX.1-SCHNELL</span><i>✦</i><span>SDXL 1.0</span><i>✦</i><span>POLLINATIONS FLUX</span><i>✦</i><span>AUTO FAILOVER</span><i>✦</i><span>MIT LICENSED</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ======================= WORKSPACE ======================= -->
+    <section class="workspace">
+      <!-- ---------- Controls ---------- -->
+      <aside class="panel controls reveal" aria-label="Generation controls">
+        <div class="panel-heading">
+          <div>
+            <h2>Creation controls</h2>
+            <p>Describe your vision and tune the output.</p>
+          </div>
+          <span class="panel-index">01</span>
+        </div>
+
+        <div class="field">
+          <div class="field-label-row">
+            <label for="promptInput">Prompt <span class="required">*</span></label>
+            <div class="mini-actions">
+              <button type="button" class="link-btn" id="surpriseBtn">✨ Surprise me</button>
+              <button type="button" class="link-btn" id="clearPromptBtn">Clear</button>
+            </div>
+          </div>
+          <textarea id="promptInput" rows="4" maxlength="2000" placeholder="e.g. a lone lighthouse at sunrise, dramatic clouds, cinematic lighting..."></textarea>
+          <div class="char-row"><span id="charCount">0 / 2000</span></div>
+        </div>
+
+        <div class="field">
+          <label for="modelSelect">Generation engine</label>
+          <select id="modelSelect">
+            <option value="pollinations-flux-realism" selected>Flux Realism — Pollinations (No key)</option>
+            <option value="pollinations-flux">Flux — Pollinations (No key)</option>
+            <option value="pollinations-turbo">Turbo — Pollinations (No key)</option>
+            <option value="pollinations-any-dark">Any Dark — Pollinations (No key)</option>
+            <option value="hf-flux">FLUX.1-Schnell — Hugging Face (Free token)</option>
+            <option value="hf-sdxl">SDXL 1.0 — Hugging Face (Free token)</option>
+          </select>
+          <p class="field-hint">HF models automatically fall back to the keyless engine when no token is available.</p>
+        </div>
+
+        <div class="field">
+          <label for="styleSelect">Style preset</label>
+          <select id="styleSelect">
+            <option value="none">None — use my prompt only</option>
+            <option value="photorealistic" selected>Photorealistic</option>
+            <option value="cinematic">Cinematic</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="anime">Anime</option>
+            <option value="3d-render">3D Render</option>
+            <option value="oil-painting">Oil Painting</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Resolution preset</label>
+          <div class="preset-grid" role="group" aria-label="Resolution preset">
+            <button type="button" class="preset-btn active" data-width="1024" data-height="1024"><strong>1024 × 1024</strong><small>Square</small></button>
+            <button type="button" class="preset-btn" data-width="1280" data-height="720"><strong>1280 × 720</strong><small>Landscape</small></button>
+            <button type="button" class="preset-btn" data-width="720" data-height="1280"><strong>720 × 1280</strong><small>Portrait</small></button>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="seedInput">Seed</label>
+            <div class="input-with-btn">
+              <input type="number" id="seedInput" min="0" max="2147483647" value="0" />
+              <button type="button" class="btn btn-mini" id="randomSeedBtn" title="Randomize seed">🎲</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="batchSelect">Batch count</label>
+            <select id="batchSelect">
+              <option value="1" selected>1 image</option>
+              <option value="2">2 images</option>
+              <option value="3">3 images</option>
+              <option value="4">4 images</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="switch-row" for="enhanceToggle">
+          <span>
+            <strong>Enhance prompt</strong>
+            <small>Adds realistic detail tokens for sharper results.</small>
+          </span>
+          <input type="checkbox" id="enhanceToggle" checked />
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+
+        <details class="token-box" id="tokenDetails">
+          <summary>🔑 API token settings <span>(optional)</span></summary>
+          <p class="field-hint">Paste a free Hugging Face read token to unlock FLUX.1-Schnell and SDXL. Stored only in this browser's localStorage.</p>
+          <div class="input-with-btn">
+            <input type="password" id="tokenInput" placeholder="hf_..." autocomplete="off" spellcheck="false" />
+            <button type="button" class="btn btn-mini" id="showTokenBtn" title="Show or hide token">👁</button>
+          </div>
+          <div class="token-actions">
+            <label class="check-row"><input type="checkbox" id="rememberTokenToggle" checked /> Remember on this device</label>
+            <button type="button" class="link-btn danger" id="clearTokenBtn">Remove token</button>
+          </div>
+        </details>
+
+        <button type="button" class="btn btn-generate" id="generateBtn">
+          <span id="generateBtnLabel">Generate image</span>
+          <span class="generate-arrow" aria-hidden="true">→</span>
+        </button>
+      </aside>
+
+      <!-- ---------- Preview ---------- -->
+      <section class="panel preview reveal" aria-label="Image preview">
+        <div class="panel-heading">
+          <div>
+            <h2>Live preview</h2>
+            <p id="statusText">Ready when you are.</p>
+          </div>
+          <div class="preview-meta">
+            <span class="engine-status" id="engineStatus"><span></span> Keyless engine ready</span>
+            <span class="timer" id="timerText">0.0s</span>
+          </div>
+        </div>
+
+        <div class="preview-stage" id="previewStage">
+          <div class="stage-frame" aria-hidden="true"></div>
+          <div class="scanline" aria-hidden="true"></div>
+          <div class="preview-placeholder" id="previewPlaceholder">
+            <div class="placeholder-icon">🖼️</div>
+            <h3>Your canvas is waiting</h3>
+            <p>Write a prompt on the left and hit <strong>Generate image</strong>.</p>
+          </div>
+          <img id="previewImage" alt="Generated AI artwork preview" hidden />
+          <div class="skeleton" id="skeleton" hidden>
+            <div class="shimmer"></div>
+            <div class="loader-content">
+              <div class="spinner"></div>
+              <p>Generating your image…</p>
+              <small>Free engines can take 10–60 seconds.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-details" id="previewDetails" hidden>
+          <p class="preview-prompt" id="previewPrompt"></p>
+          <div class="preview-tags" id="previewTags"></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="downloadBtn" disabled>⬇ Download PNG</button>
+          <button type="button" class="btn btn-ghost" id="copyPromptBtn" disabled>⧉ Copy prompt</button>
+          <button type="button" class="btn btn-ghost" id="reuseSeedBtn" disabled>↺ Reuse seed</button>
+        </div>
+        <p class="preview-note" id="previewNote" hidden></p>
+      </section>
+    </section>
+
+    <!-- ======================= GALLERY ======================= -->
+    <section class="panel gallery reveal" aria-label="Session gallery">
+      <div class="panel-heading">
+        <div>
+          <h2>Session gallery</h2>
+          <p>Everything you generate is saved locally. <span id="galleryCount">0 images</span></p>
+        </div>
+        <button type="button" class="btn btn-mini" id="refreshGalleryBtn">↻ Refresh</button>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+      <div class="gallery-empty" id="galleryEmpty">No images yet — your creations will appear here.</div>
+    </section>
+  </main>
+
+  <!-- ======================= FOOTER ======================= -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p><strong>VB Image AI Studio</strong> · Built with Flask + Vanilla JS · MIT Licensed</p>
+      <p class="footer-credit">
+        Crafted by <strong>Raj Gautam</strong> — BCA student, cybersecurity enthusiast &amp; FOSS advocate.
+        <button type="button" class="link-btn" id="footerDevBtn">About the developer</button>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ======================= DEVELOPER MODAL ======================= -->
+  <div class="modal" id="devModal" hidden>
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="devModalTitle">
+      <button type="button" class="modal-close" id="closeDevModal" aria-label="Close dialog">✕</button>
+      <div class="modal-avatar">RG</div>
+      <p class="eyebrow">MEET THE DEVELOPER</p>
+      <h2 id="devModalTitle">Raj Gautam</h2>
+      <p class="modal-role">BCA Student · Cybersecurity Enthusiast · Linux &amp; FOSS Advocate · AI Tool Builder</p>
+      <p class="modal-bio">"Passionate about open-source technology, cybersecurity, and building accessible AI tools for everyone."</p>
+      <div class="modal-grid">
+        <div><span>Education</span><strong>Bachelor of Computer Applications</strong><small>Veer Bahadur Singh Purvanchal University, Jaunpur</small></div>
+        <div><span>Focus</span><strong>Security &amp; FOSS</strong><small>Building practical, privacy-friendly tools</small></div>
+      </div>
+      <div class="social-links">
+        <a href="https://github.com/Rg100152" target="_blank" rel="noopener noreferrer">🐙 GitHub</a>
+        <a href="https://github.com/Rg100152/vb-image" target="_blank" rel="noopener noreferrer">⭐ VB Image AI Studio</a>
+        <a href="https://instagram.com/linux.userraj" target="_blank" rel="noopener noreferrer">📷 @linux.userraj</a>
+        <a href="https://youtube.com/@codeitraj" target="_blank" rel="noopener noreferrer">▶ @codeitraj</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="/static/js/script.js" defer></script>
+</body>
+</html>
